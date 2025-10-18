@@ -1,0 +1,236 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "develop-health-mvp"
+version = "1.0.0"
+description = "AI-powered healthcare automation for benefit verification, clinical qualification, and prior authorization"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Anish Gillella", email = "anish@example.com" }
+]
+keywords = [
+    "healthcare",
+    "AI",
+    "prior-authorization",
+    "LLM",
+    "medical",
+    "insurance",
+    "automation"
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Web Environment",
+    "Intended Audience :: Healthcare Industry",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    # Web Framework
+    "fastapi==0.109.0",
+    "uvicorn[standard]==0.27.0",
+    "pydantic==2.6.0",
+    "pydantic-settings==2.1.0",
+    
+    # LLM & Embeddings
+    "openai==1.10.0",
+    "langchain==0.1.4",
+    "langchain-community==0.0.16",
+    "sentence-transformers==2.3.1",
+    
+    # Vector Database
+    "chromadb==0.4.22",
+    
+    # Database
+    "psycopg2-binary==2.9.9",
+    "sqlalchemy==2.0.25",
+    "alembic==1.13.1",
+    
+    # Async Tasks
+    "celery==5.3.6",
+    "redis==5.0.1",
+    
+    # PDF Generation
+    "reportlab==4.0.9",
+    "pypdf2==3.0.1",
+    
+    # Data Generation & Processing
+    "faker==22.6.0",
+    "python-dateutil==2.8.2",
+    
+    # Utilities
+    "tenacity==8.2.3",
+    "python-dotenv==1.0.1",
+    "httpx==0.26.0",
+    
+    # Monitoring (optional)
+    "prometheus-client==0.19.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    # Testing
+    "pytest==7.4.4",
+    "pytest-asyncio==0.23.4",
+    "pytest-cov==4.1.0",
+    
+    # Code Quality
+    "black==24.1.1",
+    "isort==5.13.2",
+    "flake8==7.0.0",
+    "mypy==1.8.0",
+    "ruff==0.2.1",
+    
+    # Documentation
+    "sphinx==7.2.6",
+    "sphinx-rtd-theme==2.0.0",
+]
+
+lint = [
+    "black==24.1.1",
+    "isort==5.13.2",
+    "flake8==7.0.0",
+    "mypy==1.8.0",
+    "ruff==0.2.1",
+]
+
+test = [
+    "pytest==7.4.4",
+    "pytest-asyncio==0.23.4",
+    "pytest-cov==4.1.0",
+]
+
+docs = [
+    "sphinx==7.2.6",
+    "sphinx-rtd-theme==2.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/develop-health-mvp"
+Documentation = "https://develop-health-mvp.readthedocs.io"
+Repository = "https://github.com/yourusername/develop-health-mvp.git"
+"Bug Tracker" = "https://github.com/yourusername/develop-health-mvp/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311", "py312"]
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | venv
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 100
+skip_gitignore = true
+known_first_party = ["app"]
+known_third_party = ["fastapi", "pydantic", "sqlalchemy"]
+multi_line_mode = 3
+include_trailing_comma = true
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = [
+    "chromadb.*",
+    "sentence_transformers.*",
+    "celery.*",
+]
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    ".venv",
+    "venv",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # Pyflakes
+    "I",    # isort
+    "C",    # flake8-comprehensions
+    "B",    # flake8-bugbear
+    "UP",   # pyupgrade
+]
+ignore = [
+    "E501",  # line too long (handled by black)
+    "W505",  # doc line too long
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
+    "--cov=app",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+]
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "slow: Slow running tests",
+    "requires_db: Tests requiring database",
+]
+
+[tool.coverage.run]
+source = ["app"]
+branch = true
+omit = [
+    "*/tests/*",
+    "*/__init__.py",
+    "*/migrations/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]

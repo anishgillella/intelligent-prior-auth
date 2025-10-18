@@ -1,0 +1,108 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+ENV/
+env/
+.venv
+
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+.cursor/
+.cursor/**
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Project-Specific
+# Database
+*.db
+*.sqlite
+*.sqlite3
+chroma_db/
+.chroma/
+
+# Generated Mock Data (comment out to commit initial data)
+mock_data/patients.json
+mock_data/plans.json
+mock_data/forms.json
+mock_data/policies/
+
+# Generated Outputs
+/tmp/
+/temp/
+pa_forms/
+*.pdf
+logs/
+*.log
+
+# LLM & API
+openai_logs.json
+llm_cache/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# Docker
+docker-compose.override.yml
+.docker/
+
+# OS Files
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# uv package manager
+.uv/
+uv.lock
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# Celery
+celerybeat-schedule
