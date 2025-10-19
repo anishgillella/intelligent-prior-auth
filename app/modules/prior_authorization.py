@@ -6,7 +6,7 @@ import logging
 from datetime import datetime
 from typing import Dict, Any, Optional
 
-from app.core.llm_client import LLMClient
+from app.core.llm_client import get_llm_client
 from app.data.database import get_db_context
 from app.data.db_models import Patient
 from app.prompts.prior_authorization import (
@@ -23,7 +23,7 @@ class PriorAuthorizationGenerator:
     
     def __init__(self):
         """Initialize PA generator with LLM client"""
-        self.llm_client = LLMClient()
+        self.llm_client = get_llm_client()
     
     def generate_form(
         self,

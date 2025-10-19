@@ -17,7 +17,15 @@ class Settings(BaseSettings):
     api_port: int = 8000
     api_key: str = "dev_api_key"
     
-    # OpenRouter Settings
+    # LLM Provider Selection (Cerebras is PRIMARY)
+    llm_provider: str = "cerebras"
+    
+    # Cerebras Settings (PRIMARY PROVIDER - GPT-OSS-120B)
+    cerebras_api_key: str = ""
+    cerebras_model: str = "gpt-oss-120b"
+    cerebras_base_url: str = "https://api.cerebras.ai/v1"
+    
+    # OpenRouter Settings (FALLBACK)
     openrouter_api_key: str = ""
     openrouter_model: str = "openai/gpt-4o"
     openrouter_base_url: str = "https://openrouter.ai/api/v1"
@@ -55,4 +63,3 @@ class Settings(BaseSettings):
 
 # Global settings instance
 settings = Settings()
-
