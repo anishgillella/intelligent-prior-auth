@@ -482,15 +482,20 @@ PA Submissions: Online portal or fax to 1-800-PA-SUBMIT
 
 # ==================== Main Execution ====================
 
-def main():
-    """Generate all synthetic data"""
+def main(num_patients=20):
+    """Generate all synthetic data
+    
+    Args:
+        num_patients: Number of patients to generate (default: 20)
+    """
     print("\n" + "=" * 60)
     print("🏥 DEVELOP HEALTH MVP - SYNTHETIC DATA GENERATOR")
     print("=" * 60)
-    print(f"Output Directory: {DATA_DIR.absolute()}\n")
+    print(f"Output Directory: {DATA_DIR.absolute()}")
+    print(f"Generating: {num_patients} patients\n")
     
     # Generate patients
-    patients = generate_patients(20)  # Smaller dataset for MVP
+    patients = generate_patients(num_patients)
     with open(DATA_DIR / "patients.json", "w") as f:
         json.dump(patients, f, indent=2)
     
@@ -526,5 +531,21 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    
+    # Check if user provided number of patients as argument
+    num_patients = 20  # Default
+    if len(sys.argv) > 1:
+        try:
+            num_patients = int(sys.argv[1])
+            if num_patients < 1:
+                print("❌ Number of patients must be at least 1")
+                sys.exit(1)
+            if num_patients > 10000:
+                print("⚠️  Warning: Generating 10,000+ patients may take a while...")
+        except ValueError:
+            print(f"❌ Invalid argument: '{sys.argv[1]}' is not a number")
+            sys.exit(1)
+    
+    main(num_patients)
 

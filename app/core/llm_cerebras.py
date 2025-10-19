@@ -1,5 +1,6 @@
 """
 Cerebras LLM client implementation using OpenAI-compatible API
+Enhanced with Langfuse monitoring and LogFire tracking
 """
 import logging
 import time
@@ -9,6 +10,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 
 from app.core.llm_base import BaseLLMClient
 from app.core.config import settings
+from app.core.monitoring import LLMCallMonitor, get_langfuse_client
 
 logger = logging.getLogger(__name__)
 
@@ -103,6 +105,20 @@ class CerebrasLLMClient(BaseLLMClient):
             if response_format:
                 kwargs["response_format"] = response_format
             
+            # Create Langfuse trace
+            langfuse_client = get_langfuse_client()
+            trace = None
+            if langfuse_client:
+                trace = langfuse_client.start_span(
+                    name="cerebras_llm_call",
+                    input={
+                        "model": self.model,
+                        "messages": messages,
+                        "temperature": temperature,
+                        "max_tokens": max_tokens,
+                    }
+                )
+            
             # Make API call
             response = client.chat.completions.create(**kwargs)
             
@@ -124,6 +140,18 @@ class CerebrasLLMClient(BaseLLMClient):
                 ),
             }
             
+            # Update Langfuse trace
+            if trace:
+                trace.update(
+                    output={
+                        "content": result["content"],
+                        "tokens_used": result["tokens_used"],
+                        "cost": result["cost"],
+                    },
+                )
+                trace.end()
+                langfuse_client.flush()
+            
             logger.info(
                 f"Cerebras LLM call successful: {self.model} | "
                 f"Tokens: {result['tokens_used']['total']} | "
@@ -134,6 +162,14 @@ class CerebrasLLMClient(BaseLLMClient):
             return result
             
         except Exception as e:
+            # Update Langfuse trace with error
+            langfuse_client = get_langfuse_client()
+            if langfuse_client and trace:
+                trace.update(
+                    output=None,
+                )
+                langfuse_client.flush()
+            
             logger.error(f"Cerebras API error: {e}")
             raise
     

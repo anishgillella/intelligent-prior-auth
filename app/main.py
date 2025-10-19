@@ -12,7 +12,8 @@ from app.core.logger import setup_logging
 from app.data.models import HealthCheckResponse, SystemInfoResponse
 from app.data.database import check_db_connection
 from app.data.vector_index import initialize_vector_index
-from app.routes import benefit_verification, policy_search, clinical_qualification, prior_authorization, orchestrator
+from app.core.monitoring import initialize_monitoring
+from app.routes import benefit_verification, policy_search, clinical_qualification, prior_authorization, orchestrator, monitoring_demo
 
 # Setup logging
 setup_logging()
@@ -55,6 +56,14 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning(f"⚠ ChromaDB initialization warning: {e}")
     
+    # Initialize monitoring
+    logger.info("Initializing monitoring...")
+    try:
+        initialize_monitoring()
+        logger.info("✓ Monitoring initialized")
+    except Exception as e:
+        logger.warning(f"⚠ Monitoring initialization warning: {e}")
+    
     yield
     
     # Shutdown
@@ -86,6 +95,7 @@ app.include_router(policy_search.router)
 app.include_router(clinical_qualification.router)
 app.include_router(prior_authorization.router)
 app.include_router(orchestrator.router)
+app.include_router(monitoring_demo.router)
 
 
 # ==================== Root Endpoints ====================
