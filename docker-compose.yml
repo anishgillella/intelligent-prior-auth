@@ -72,6 +72,27 @@ services:
     networks:
       - develop_health_network
 
+  neo4j:
+    image: neo4j:5.15-community
+    container_name: develop_health_neo4j
+    ports:
+      - "7687:7687"  # Bolt protocol for driver
+      - "7474:7474"  # HTTP (web UI disabled)
+    environment:
+      NEO4J_AUTH: neo4j/develop_health_neo4j_password
+      NEO4J_dbms_memory_heap_max__size: 1G
+      NEO4J_apoc_export_data_enabled: "true"
+    volumes:
+      - neo4j_data:/var/lib/neo4j/data
+    healthcheck:
+      test: ["CMD", "neo4j", "status"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - develop_health_network
+    restart: unless-stopped
+
   celery_worker:
     build: .
     container_name: develop_health_celery
@@ -93,6 +114,7 @@ services:
 volumes:
   postgres_data:
   redis_data:
+  neo4j_data:
 
 networks:
   develop_health_network:
