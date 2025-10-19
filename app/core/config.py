@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     # API Settings
     api_host: str = "0.0.0.0"
     api_port: int = 8000
-    api_key: str = "dev_api_key"
+    api_key: str = ""
     
     # LLM Provider Selection (Cerebras is PRIMARY)
     llm_provider: str = "cerebras"
